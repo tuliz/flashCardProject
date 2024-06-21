@@ -19,21 +19,22 @@ def change_language():
 
 #---Get a new random word when buttons are pressed---
 def random_word_pick():
-    global current_french
-    global current_english
+    global current_french, current_english, flip_timer
+    window.after_cancel(flip_timer)
     current_card = random.choice(words_dic)
     current_english = current_card['English']
     current_french = current_card['French']
     canvas.itemconfig(language_text,text='French',fill='black')
     canvas.itemconfig(french_text,text=f'{current_french}',fill='black')
     canvas.itemconfig(card_canvas, image=front_card_image)
-    window.after(3000, change_language)
+    flip_timer = window.after(3000, change_language)
 
 
 #----UI----
 window = Tk()
 window.title('Flash Cards')
 window.config(bg=BACKGROUND_COLOR, padx=50,pady=50)
+flip_timer = window.after(3000, change_language)
 
 #implementing V button with image
 right_image = PhotoImage(file='./images/right.png')
