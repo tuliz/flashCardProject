@@ -2,13 +2,27 @@ from tkinter import *
 import pandas
 import random
 BACKGROUND_COLOR = "#B1DDC6"
+current_card = {}
 current_english = ""
 current_french =""
 
 
 #---Getting the words from CVS file---
-words_dataframe = pandas.read_csv('./data/french_words.csv')
-words_dic = words_dataframe.to_dict(orient="records")
+try:
+    words_dataframe = pandas.read_csv('./data/words_to_learn.csv')
+except FileNotFoundError:
+    words_dataframe = pandas.read_csv('./data/french_words.csv')
+finally:
+    words_dic = words_dataframe.to_dict(orient="records")
+    print(len(words_dic))
+
+
+#----Checking if user pressed V and that he knows the current words and get it out of the list----
+def remove_words_right():
+    words_dic.remove(current_card)
+    words_to_learn_dataframe = pandas.DataFrame(words_dic)
+    words_to_learn_dataframe.to_csv('./data/words_to_learn.csv')
+    random_word_pick()
 
 #----Function for changing the word from french to english
 def change_language():
@@ -19,7 +33,7 @@ def change_language():
 
 #---Get a new random word when buttons are pressed---
 def random_word_pick():
-    global current_french, current_english, flip_timer
+    global current_french, current_english, flip_timer,current_card
     window.after_cancel(flip_timer)
     current_card = random.choice(words_dic)
     current_english = current_card['English']
@@ -38,7 +52,7 @@ flip_timer = window.after(3000, change_language)
 
 #implementing V button with image
 right_image = PhotoImage(file='./images/right.png')
-right_btn = Button(image=right_image, highlightthickness=0,command=random_word_pick)
+right_btn = Button(image=right_image, highlightthickness=0,command=remove_words_right)
 right_btn.grid(row=1,column=1)
 
 #implementing X button with image
